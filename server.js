@@ -3,11 +3,13 @@ require('dotenv').config(); //Lädt die Umgebungsvariablen aus der .env-Datei.
 const express = require('express'); // Das Express-Framework wird importiert.
 const mongoose = require('mongoose'); // Das Mongoose-Paket wird importiert.
 
+const outfitRoutes = require('./routes/outfit.routes'); // Die Outfit-Routen werden importiert.
 const app = express(); // Eine Express-Anwendung wird erstellt und in der Konstanten app gespeichert.
 const PORT = 3000; // Der Backend-Server verwendet den Port 3000.
 
 
 app.use(express.json()); // Eingehende JSON-Daten werden automatisch gelesen.
+app.use('/api/outfits', outfitRoutes); // Verbindet die Outfit-Routen mit der Adresse /api/outfits.
 
 mongoose
   .connect(process.env.MONGODB_URI) // Verbindet das Backend mit MongoDB über die Adresse aus der .env-Datei.
