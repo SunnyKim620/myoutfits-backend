@@ -28,6 +28,15 @@ trim:true,
 
 },
 
+imageUrl: {
+
+  type: String,
+
+  default: '',
+
+  trim: true,
+
+}, // Speichert den Pfad des hochgeladenen Outfit-Bildes.
 
 description:{
 type: String,
