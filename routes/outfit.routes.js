@@ -1,5 +1,9 @@
 const express = require('express'); // Das Express-Framework wird importiert.
 
+const fs = require('fs'); // Ermöglicht das Löschen einer gespeicherten Bilddatei.
+
+const path = require('path'); // Erstellt den vollständigen Pfad zur Bilddatei.
+
 const router = express.Router(); // Ein Router für die Outfit-Routen wird erstellt.
 
 const Outfit =
@@ -83,5 +87,81 @@ router.post(
   }
 );
 
+// DELETE: Ein Outfit und sein Bild löschen
+router.delete('/:id', async (req, res) => {
+
+  try {
+
+    const geloeschtesOutfit =
+      await Outfit.findByIdAndDelete(
+        req.params.id
+      ); // Löscht das Outfit mit der übergebenen MongoDB-ID.
+
+
+    if (!geloeschtesOutfit) {
+
+      return res.status(404).json({
+        message: 'Outfit wurde nicht gefunden.',
+      }); // Sendet den Statuscode 404, wenn kein Outfit gefunden wurde.
+
+    }
+
+
+    if (geloeschtesOutfit.imageUrl) {
+
+      const relativerBildpfad =
+        geloeschtesOutfit.imageUrl.replace(
+          /^\/+/,
+          ''
+        ); // Entfernt den Schrägstrich am Anfang.
+
+      const bildpfad =
+        path.join(
+          __dirname,
+          '..',
+          relativerBildpfad
+        ); // Erstellt den vollständigen Pfad zur Bilddatei.
+
+
+      try {
+
+        await fs.promises.unlink(
+          bildpfad
+        ); // Löscht das Bild aus dem Upload-Ordner.
+
+      } catch (dateiFehler) {
+
+        if (dateiFehler.code !== 'ENOENT') {
+
+          console.error(
+            'Fehler beim Löschen des Bildes:',
+            dateiFehler.message
+          );
+
+        }
+
+      }
+
+    }
+
+
+    res.json({
+      message: 'Outfit wurde erfolgreich gelöscht.',
+    }); // Bestätigt das erfolgreiche Löschen.
+
+  } catch (fehler) {
+
+    console.error(
+      'Fehler beim Löschen des Outfits:',
+      fehler.message
+    );
+
+    res.status(500).json({
+      message: 'Outfit konnte nicht gelöscht werden.',
+    });
+
+  }
+
+});
 
 module.exports = router; // Exportiert den Router für die server.js-Datei.
