@@ -87,6 +87,56 @@ router.post(
   }
 );
 
+// UPDATE: Den Favoritenstatus eines Outfits ändern
+router.patch('/:id/favorite', async (req, res) => {
+
+  try {
+
+    const outfit =
+      await Outfit.findById(
+        req.params.id
+      ); // Sucht das Outfit über seine MongoDB-ID.
+
+
+    if (!outfit) {
+
+      return res.status(404).json({
+        message: 'Outfit wurde nicht gefunden.',
+      }); // Sendet den Statuscode 404, wenn kein Outfit gefunden wurde.
+
+    }
+
+
+    outfit.favorite =
+      !outfit.favorite;
+    // Wechselt zwischen Favorit und Nicht-Favorit.
+
+
+    const aktualisiertesOutfit =
+      await outfit.save();
+    // Speichert den neuen Favoritenstatus in MongoDB.
+
+
+    res.json(
+      aktualisiertesOutfit
+    ); // Sendet das aktualisierte Outfit zurück.
+
+  } catch (fehler) {
+
+    console.error(
+      'Fehler beim Ändern des Favoritenstatus:',
+      fehler.message
+    );
+
+    res.status(500).json({
+      message:
+        'Der Favoritenstatus konnte nicht geändert werden.',
+    });
+
+  }
+
+});
+
 // DELETE: Ein Outfit und sein Bild löschen
 router.delete('/:id', async (req, res) => {
 
