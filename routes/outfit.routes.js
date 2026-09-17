@@ -38,6 +38,52 @@ router.get('/', async (req, res) => {
 
 });
 
+// READ: Ein einzelnes Outfit über seine ID laden
+router.get('/:id', async (req, res) => {
+
+  try {
+
+    const outfit =
+      await Outfit.findById(
+        req.params.id
+      );
+    // Sucht das Outfit über die übergebene MongoDB-ID.
+
+
+    if (!outfit) {
+
+      return res.status(404).json({
+
+        message:
+          'Outfit wurde nicht gefunden.',
+
+      });
+      // Sendet den Statuscode 404, wenn kein Outfit gefunden wurde.
+
+    }
+
+
+    res.json(outfit);
+    // Sendet das gefundene Outfit an das Frontend.
+
+  } catch (fehler) {
+
+    console.error(
+      'Fehler beim Laden des Outfits:',
+      fehler.message
+    );
+
+    res.status(400).json({
+
+      message:
+        'Outfit konnte nicht geladen werden.',
+
+    });
+    // Sendet bei einer ungültigen ID den Statuscode 400.
+
+  }
+
+});
 
 // CREATE: Ein neues Outfit mit einem optionalen Bild speichern
 router.post(
@@ -86,6 +132,174 @@ router.post(
 
   }
 );
+
+
+// UPDATE: Ein Outfit und optional sein Bild ändern
+
+router.put(
+  '/:id',
+  upload.single('image'),
+  async (req, res) => {
+
+    try {
+
+      const outfit =
+        await Outfit.findById(
+          req.params.id
+        );
+      // Sucht das Outfit über seine MongoDB-ID.
+
+
+      if (!outfit) {
+
+        if (req.file) {
+
+          await fs.promises
+            .unlink(req.file.path)
+            .catch(() => {});
+          // Entfernt ein bereits hochgeladenes neues Bild.
+
+        }
+
+        return res.status(404).json({
+          message:
+            'Outfit wurde nicht gefunden.',
+        });
+
+      }
+
+
+      const alteBildUrl =
+        outfit.imageUrl;
+      // Speichert den bisherigen Bildpfad.
+
+
+      outfit.title =
+        req.body.title ??
+        outfit.title;
+
+      outfit.season =
+        req.body.season ??
+        outfit.season;
+
+      outfit.occasion =
+        req.body.occasion ??
+        outfit.occasion;
+
+      outfit.color =
+        req.body.color ??
+        outfit.color;
+
+      outfit.description =
+        req.body.description ??
+        outfit.description;
+      // Ändert die übermittelten Textdaten.
+
+
+      if (
+        req.body.favorite !==
+        undefined
+      ) {
+
+        outfit.favorite =
+          req.body.favorite === true ||
+          req.body.favorite === 'true';
+
+      }
+
+
+      if (req.file) {
+
+        outfit.imageUrl =
+          '/uploads/' +
+          req.file.filename;
+        // Verwendet das neu hochgeladene Bild.
+
+      }
+
+
+      const aktualisiertesOutfit =
+        await outfit.save();
+      // Speichert die Änderungen in MongoDB.
+
+
+      if (
+        req.file &&
+        alteBildUrl
+      ) {
+
+        const relativerBildpfad =
+          alteBildUrl.replace(
+            /^\/+/,
+            ''
+          );
+
+        const alterBildpfad =
+          path.join(
+            __dirname,
+            '..',
+            relativerBildpfad
+          );
+
+
+        try {
+
+          await fs.promises.unlink(
+            alterBildpfad
+          );
+          // Löscht das alte Bild nach erfolgreicher Änderung.
+
+        } catch (dateiFehler) {
+
+          if (
+            dateiFehler.code !==
+            'ENOENT'
+          ) {
+
+            console.error(
+              'Fehler beim Löschen des alten Bildes:',
+              dateiFehler.message
+            );
+
+          }
+
+        }
+
+      }
+
+
+      res.json(
+        aktualisiertesOutfit
+      );
+      // Sendet das aktualisierte Outfit zurück.
+
+    } catch (fehler) {
+
+      if (req.file) {
+
+        await fs.promises
+          .unlink(req.file.path)
+          .catch(() => {});
+        // Löscht das neue Bild, wenn das Speichern fehlschlägt.
+
+      }
+
+      console.error(
+        'Fehler beim Aktualisieren des Outfits:',
+        fehler.message
+      );
+
+      res.status(400).json({
+        message:
+          'Outfit konnte nicht aktualisiert werden.',
+        fehler: fehler.message,
+      });
+
+    }
+
+  }
+);
+
 
 // UPDATE: Den Favoritenstatus eines Outfits ändern
 router.patch('/:id/favorite', async (req, res) => {
