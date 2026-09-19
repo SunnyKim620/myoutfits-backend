@@ -8,7 +8,9 @@ const path = require('path'); // Das Node.js-Modul für Dateipfade wird importie
 
 const outfitRoutes = require('./routes/outfit.routes'); // Die Outfit-Routen werden importiert.
 const app = express(); // Eine Express-Anwendung wird erstellt und in der Konstanten app gespeichert.
-const PORT = 3000; // Der Backend-Server verwendet den Port 3000.
+const PORT =
+  process.env.PORT || 3000;
+// Verwendet den Port aus der Umgebung oder standardmäßig Port 3000.
 
 app.use(cors()); // Erlaubt dem Angular-Frontend den Zugriff auf das Backend.
 app.use(express.json()); // Eingehende JSON-Daten werden automatisch gelesen.

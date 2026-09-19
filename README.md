@@ -77,7 +77,9 @@ Die Datei `.env` enthält die MongoDB-Verbindungsadresse:
 
 ```env
 MONGODB_URI=mongodb://127.0.0.1:27017/myoutfits
+PORT=3000
 ```
+Wenn keine Portnummer angegeben wird, verwendet das Backend standardmäßig Port `3000`.
 
 Bei der Verwendung von MongoDB Atlas muss der Beispielwert durch die eigene Atlas-Verbindungsadresse ersetzt werden.
 
