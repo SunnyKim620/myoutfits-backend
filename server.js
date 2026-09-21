@@ -33,6 +33,13 @@ app.get('/', (req, res) => { // Reagiert auf eine GET-Anfrage an die Startadress
   res.send('MyOutfits-Backend läuft.'); // Sendet eine Antwort an den Browser.
 });
 
+// Antwortet mit 404, wenn keine passende Route gefunden wurde.
+app.use((req, res) => {
+  res.status(404).json({
+    message: 'Route wurde nicht gefunden.',
+  });
+});
+
 app.listen(PORT, () => { // Der Server wird auf dem festgelegten Port gestartet.
   console.log('Server läuft auf http://localhost:' + PORT); // Zeigt die Serveradresse im Terminal an.
 });
