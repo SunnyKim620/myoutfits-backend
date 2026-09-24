@@ -189,6 +189,7 @@ Der Ordner `uploads/` wird automatisch erstellt, falls er noch nicht vorhanden i
 
 Die API verwendet passende HTTP-Statuscodes:
 
+- `200` für erfolgreiche Anfragen
 - `201` für erfolgreich erstellte Outfits
 - `400` für ungültige Eingabedaten oder IDs
 - `404` für nicht gefundene Outfits
