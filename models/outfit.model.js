@@ -1,6 +1,7 @@
-const mongoose = require('mongoose'); // Das installierte Mongoose-Paket wird geladen und in der Konstanten mongoose gespeichert.
+const mongoose = require('mongoose');  //Das Mongoose-Paket wird importiert.
 
-const outfitSchema = new mongoose.Schema({   // Hier werden die Eigenschaften eines Outfits definiert.
+
+const outfitSchema = new mongoose.Schema({  // Definiert die Struktur und Regeln eines Outfits.
 title:{
     type: String,
     required: true,
