@@ -13,13 +13,19 @@ const upload =
   require('../middleware/upload'); // Die Konfiguration für Bild-Uploads wird importiert.
 
 
-// READ: Alle Outfits laden
+
+
+
+  // READ: Alle Outfits laden
 router.get('/', async (req, res) => {
 
   try {
 
     const outfits =
       await Outfit.find(); // Lädt alle Outfits aus der MongoDB-Datenbank.
+    // Hier werden alle Outfits aus MongoDB geladen.
+
+
 
     res.json(outfits); // Sendet die Outfits als JSON-Antwort.
 
@@ -37,6 +43,9 @@ router.get('/', async (req, res) => {
   }
 
 });
+
+
+
 
 // READ: Ein einzelnes Outfit über seine ID laden
 router.get('/:id', async (req, res) => {
@@ -85,15 +94,21 @@ router.get('/:id', async (req, res) => {
 
 });
 
+
+
+
 // CREATE: Ein neues Outfit mit einem optionalen Bild speichern
 router.post(
-  '/',
-  upload.single('image'),
+  '/',   // Verarbeitet die POST-Anfrage zum Erstellen eines neuen Outfits.
+  upload.single('image'),  // Lädt ein einzelnes Bild hoch.
+
   async (req, res) => {
 
     try {
 
+ // Erstellt ein neues Outfit mit den Daten vom Frontend.
       const neuesOutfit = new Outfit({
+        //Der Code erstellt ein neues Outfit.
 
         ...req.body, // Übernimmt die Textdaten aus dem Formular.
 
@@ -109,7 +124,9 @@ router.post(
 
 
       const gespeichertesOutfit =
-        await neuesOutfit.save(); // Speichert das Outfit in MongoDB.
+        await neuesOutfit.save(); // Hier wird das neue Outfit in MongoDB gespeichert.
+                                  // save() speichert das Outfit in der Datenbank.
+                                  //await wartet auf das Ergebnis von save().
 
 
       res
@@ -132,6 +149,9 @@ router.post(
 
   }
 );
+
+
+
 
 
 // UPDATE: Ein Outfit und optional sein Bild ändern
@@ -301,6 +321,9 @@ router.put(
 );
 
 
+
+
+
 // UPDATE: Den Favoritenstatus eines Outfits ändern
 router.patch('/:id/favorite', async (req, res) => {
 
@@ -350,6 +373,11 @@ router.patch('/:id/favorite', async (req, res) => {
   }
 
 });
+
+
+
+
+
 
 // DELETE: Ein Outfit und sein Bild löschen
 router.delete('/:id', async (req, res) => {
