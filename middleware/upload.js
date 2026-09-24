@@ -2,7 +2,6 @@ const fs = require('fs'); // Ermöglicht das Erstellen von Ordnern.
 const path = require('path'); // Erstellt sichere Dateipfade.
 const multer = require('multer'); // Verarbeitet hochgeladene Dateien.
 
-
 const uploadDirectory =
   path.join(__dirname, '..', 'uploads'); // Bestimmt den Speicherort der Bilder.
 
@@ -12,7 +11,7 @@ fs.mkdirSync(
   { recursive: true }
 ); // Erstellt den Upload-Ordner automatisch, falls er nicht existiert.
 
-
+// Legt fest, wo und unter welchem Namen hochgeladene Bilder gespeichert werden.
 const storage = multer.diskStorage({
 
   destination: (req, file, callback) => {
@@ -52,7 +51,7 @@ const allowedMimeTypes = [
   'image/webp',
 ]; // Legt die erlaubten Bildtypen fest.
 
-
+// Prüft, ob der Dateityp für den Upload erlaubt ist.
 const fileFilter = (req, file, callback) => {
 
   if (allowedMimeTypes.includes(file.mimetype)) {
